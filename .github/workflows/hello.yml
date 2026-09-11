@@ -1,7 +1,8 @@
 name: this is a test file
 on:
   push:
-    branch: main
+    
+  workflow_dispatch:
 
 jobs:
   greet:
