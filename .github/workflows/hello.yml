@@ -1,7 +1,5 @@
 name: this is a test file
 on:
-  push:
-    
   workflow_dispatch:
 
 jobs:
