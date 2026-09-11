@@ -1,0 +1,11 @@
+name: this is a test file
+on:
+  push:
+    branch: main
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display a simple hello Akash Message
+        run: echo "Hello Akash from ${{runner.os}}"
