@@ -11,9 +11,19 @@ jobs:
   deploy:
     if: vars.DEPLOY_ENABLED == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     concurrency: expense-tracker-production
+
     steps:
-      - uses: appleboy/ssh-action@v1
+      - name: Check server fingerprints
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          ssh-keyscan -T 10 -p 22 -t rsa,ecdsa,ed25519 "$EC2_HOST" \
+            2>/dev/null | ssh-keygen -lf - -E sha256
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
         env:
           IMAGE_TAG: ${{ inputs.image_tag }}
         with:
@@ -26,5 +36,10 @@ jobs:
             set -eu
             cd ~/expense-tracker
             export IMAGE_TAG
+            test -n "$IMAGE_TAG"
+            test -f backend/.env
+            test -f compose.deploy.yml
+
             docker compose -f docker-compose.yml -f compose.deploy.yml pull frontend backend
             docker compose -f docker-compose.yml -f compose.deploy.yml up -d --no-build --no-deps frontend backend
+            docker compose -f docker-compose.yml -f compose.deploy.yml ps
