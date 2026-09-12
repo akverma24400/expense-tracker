@@ -14,7 +14,7 @@ const Footer = () => {
       }}
     >
       <Typography variant="body2" color="textSecondary">
-        © {new Date().getFullYear()} TeamExpenseTracker · Built by Harshit Sharma
+        © {new Date().getFullYear()} TeamExpenseTracker · Built by Akash Verma
       </Typography>
     </Box>
   );
