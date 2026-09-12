@@ -1,0 +1,5 @@
+services:
+  frontend:
+    image: akash24400/expense-tracker-frontend:${IMAGE_TAG:?required}
+  backend:
+    image: akash24400/expense-tracker-backend:${IMAGE_TAG:?required}

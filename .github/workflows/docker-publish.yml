@@ -8,9 +8,17 @@ on:
     types: [completed]
     branches: [main]
 
-  workflow_dispatch:
+#  workflow_dispatch:
 
 jobs:
+  deploy:
+    needs: docker-publish
+    uses: ./.github/workflows/cd.yml
+    with:
+      image_tag: ${{ github.event.workflow_run.head_sha }}
+    secrets: inherit
+
+
   docker-publish:
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
