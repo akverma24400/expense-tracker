@@ -1,0 +1,30 @@
+name: CD
+
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    concurrency: expense-tracker-production
+    steps:
+      - uses: appleboy/ssh-action@v1
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          fingerprint: ${{ secrets.EC2_HOST_FINGERPRINT }}
+          envs: IMAGE_TAG
+          script: |
+            set -eu
+            cd ~/expense-tracker
+            export IMAGE_TAG
+            docker compose -f docker-compose.yml -f compose.deploy.yml pull frontend backend
+            docker compose -f docker-compose.yml -f compose.deploy.yml up -d --no-build --no-deps frontend backend
